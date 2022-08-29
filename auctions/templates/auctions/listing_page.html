@@ -1,0 +1,76 @@
+{% extends 'auctions/layout.html'%}
+{% block body%}
+    <div class="container">
+        {% if listing.isclosed and listing.winner == logged_user %}
+            <div class="container">
+                <div class="alert alert-success" role="alert">
+                    winner : {{listing.winner}}
+                </div>
+            </div>
+        {% endif %}
+        
+        <h1>Listing {{listing.id }}: {{listing.title}}</h1>
+        <img src={{listing.image_url}} class="img-fluids" alt={{listing.title}}>
+        <hr>
+        <h4>
+            Current Bid :  {{current_bid}}
+        </h4>
+        {% if listing.isclosed != True %}
+            <form action="{% url 'add_bid' listing.id %}" method="post">
+                {% csrf_token %}
+                <input type="number" min={{min_bid}} name="user_bid" placeholder="Place your bid">
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </form>
+        {% endif %}
+        <br>
+        {% if is_added %}
+            <a class="btn btn-danger" href="{% url 'remove_watch_list' listing.id %}" style="display: block ;">Remove from WatchList</a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'add_watch_list' listing.id %}" style="display: block ;">Add to WatchList</a>
+        {% endif %}
+        <hr>
+        <h2>Additional Information</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Start price</th>
+                    <th>Description</th>
+                    <th>Who created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> {{ listing.category }}</td>
+                    <td> {{ listing.starting_bid }}</td>
+                    <td> {{ listing.description }}</td>
+                    <td> {{ listing.owner }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% if is_owner and listing.isclosed != True %}
+            <a class="btn btn-warning" href="{% url 'close_listing' listing.id %}" style="display:block;">Close the listing</a>
+        {%endif%}
+        <br>
+        <form action="{% url 'add_comment' listing.id %}" method="post" class="form-group">
+            {% csrf_token %}
+            <textarea class="form-control" type="text" name="comment" placeholder="add a comment" minlength="2"></textarea>
+            <br>
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+        {% if comments %}
+            <h2>Comments</h2>
+            {% for comment in comments %}
+                <div class="card">
+                    <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <h5 class="card-title">{{comment.user.username}}</h5>
+                                <h6 class="card-text">{{ comment.comment }}</h6>
+                                <p class="text-primary">{{comment.date}}</p>
+                            </li>
+                    </ul>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock%}

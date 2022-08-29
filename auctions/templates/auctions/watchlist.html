@@ -1,0 +1,22 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <h2>Your WatchLists</h2>
+    <div class="container">
+        {% for watchList in watchLists %}
+                <div class="card mb-4" style="width: 540px;">
+                    <div class="row">
+                        <img class="card-img-left col-md-6" src={{watchList.listing.image_url}} alt={{ watchList.listing.title }}>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ watchList.listing.title }}</h5>
+                            <p class="card-text">{{ watchList.listing.description }}</p>
+                            <p class="card-text"> ${{ watchList.listing.bids.last.bid }}</p>
+                            <a href="{%url 'listing_page' watchList.listing.id %}" class="btn btn-primary">Open</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <p> No Listing</p>
+        {% endfor %}
+        </div>
+{% endblock %} 
